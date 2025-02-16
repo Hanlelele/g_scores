@@ -81,6 +81,14 @@ export function Statistics({ data }: { data: StatisticsData[] }) {
                 </Pie>
                 <Tooltip content={<CustomTooltip />} />
                 <Legend
+                    wrapperStyle={{
+                        width: '100%',
+                        textAlign: 'center',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                    className="w-full"
                     layout="horizontal"
                     verticalAlign="bottom"
                     align="center"
