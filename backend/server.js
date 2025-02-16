@@ -7,6 +7,7 @@ const csv = require("csv-parser");
 const fs = require("fs");
 
 const Score = require("./models/score");
+
 dotenv.config();
 
 const scoreRouter = require("./routes/scoreRoutes");
@@ -74,7 +75,10 @@ const importData = async () => {
     }
   };
 
-// import data
+// import data from csv file
+
+// Uncomment this line to import data from csv file
+
 //importData();
 
 
