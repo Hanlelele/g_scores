@@ -32,6 +32,8 @@ app.use(
     })
 );
 
+// Transform data from csv file
+
 const parseNumber = (value) => {
     const num = parseFloat(value);
     return isNaN(num) ? null : num; 
@@ -44,7 +46,7 @@ const importData = async () => {
         .pipe(csv({ separator: "," }))
         .on("data", (data) => {
           results.push({
-            sbd: data.sbd,
+            registration_Number: data.sbd,
             math: parseNumber(data.toan),
             literature: parseNumber(data.ngu_van),
             english: parseNumber(data.ngoai_ngu),
@@ -61,7 +63,7 @@ const importData = async () => {
           await Score.deleteMany();
           await Score.insertMany(results);
           console.log("Data imported successfully!");
-          mongoose.connection.close();
+          //mongoose.connection.close();
         });
 
         console.log("results", results);
@@ -70,12 +72,10 @@ const importData = async () => {
       mongoose.connection.close();
     }
   };
-  
-importData();
 
-app.get("/", (req, res) => {
-    res.send("Hello Node.js!");
-});
+// import data
+//importData();
+
 
 // Routes
 app.use("/api/v1/scores", scoreRouter);

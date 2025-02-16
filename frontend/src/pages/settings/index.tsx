@@ -1,27 +1,24 @@
-// import { useState } from 'react';
-
-// import useDialogState from '@/hooks/use-dialog-state';
-// import { Header } from '@/components/layout/header';
-// import { Main } from '@/components/layout/main';
-// import { columns } from './components/users-columns';
-// import { UsersTable } from './components/users-table';
-// import UsersContextProvider, { type UsersDialogType } from './context/users-context';
-// import { Game, gameListSchema } from './data/schema';
-// import { games } from './data/game';
+import { Header } from '@/components/layout/header';
+import { Main } from '@/components/layout/main';
 import Layout from '../layout';
-// import { UsersActionDialog } from './components/users-action-dialog';
 
 export default function Settings() {
-    // // Dialog states
-    // const [currentRow, setCurrentRow] = useState<Game | null>(null);
-    // const [open, setOpen] = useDialogState<UsersDialogType>(null);
-
-    // // Parse user list
-    // const userList = gameListSchema.parse(games);
-
     return (
         <Layout>
-            <h1>Settings</h1>
+            {/* ===== Top Heading ===== */}
+            <Header sticky>
+                {/* <Search /> */}
+                <div className="ml-auto flex items-center space-x-4"></div>
+            </Header>
+            {/* ===== Main ===== */}
+            <Main>
+                <div className="mb-2 flex items-center justify-between space-y-2 flex-wrap">
+                    <div>
+                        <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
+                        <p className="text-muted-foreground">Settings</p>
+                    </div>
+                </div>
+            </Main>
         </Layout>
     );
 }

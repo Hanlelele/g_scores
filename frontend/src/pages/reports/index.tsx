@@ -1,91 +1,162 @@
-// import { useEffect, useState } from 'react';
-// import { IconUserPlus } from '@tabler/icons-react';
-// import useDialogState from '@/hooks/use-dialog-state';
-// import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 import { Header } from '@/components/layout/header';
 import { Main } from '@/components/layout/main';
-// import { UsersActionDialog } from './components/users-action-dialog';
-// import { columns } from './components/users-columns';
-// import { UsersDeleteDialog } from './components/users-delete-dialog';
-// import { UsersTable } from './components/users-table';
-// import UsersContextProvider, { type UsersDialogType } from './context/users-context';
-// import { User, userListSchema } from './data/schema';
 import Layout from '../layout';
-import { Tabs, TabsContent } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Overview } from './components/overview';
-// import customAxios from '@/api/customApi';
-// import { UsersUnBlockDialog } from './components/user-unblock-dialog';
+import { Statistics } from './components/statistics';
+import { TopGroupA } from './components/top-groupA';
+import customAxios from '@/api/customApi';
+
+import { AverageResponse, AverageScore, StatisticsData, StatisticsResponse, TopResponse, TopScore } from '@/types/api';
+
+const selectSubject = new Map<string, string>([
+    ['math', 'Math'],
+    ['literature', 'Literature'],
+    ['english', 'English'],
+    ['physics', 'Physics'],
+    ['chemistry', 'Chemistry'],
+    ['biology', 'Biology'],
+    ['history', 'History'],
+    ['geography', 'Geography'],
+    ['civic_education', 'Civic Education'],
+]);
 
 export default function Reports() {
-    // Dialog states
-    // const [currentRow, setCurrentRow] = useState<User | null>(null);
-    // const [open, setOpen] = useDialogState<UsersDialogType>(null);
+    const [currentSubject, setCurrentSubject] = useState<string>('math');
+    const [dataChart, setDataChart] = useState<StatisticsData[]>([]);
+    const [dataTop, setDataTop] = useState<TopScore[]>([]);
+    const [dataAverage, setDataAverage] = useState<AverageScore>();
 
-    // const [users, setUsers] = useState<User[]>([]);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await customAxios.get<StatisticsResponse>('/v1/scores/statistics', {
+                    params: {
+                        subject: currentSubject,
+                    },
+                });
+                if (response.data.success) {
+                    setDataChart(response.data.data.scoreDistribution);
+                    console.log('dataChart', dataChart);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
 
-    // const fetchUsers = async () => {
-    //     try {
-    //         const response = await customAxios.get('/Admin/GetUsers');
+        fetchData();
+    }, [currentSubject]);
 
-    //         const data = response.data.data.users;
-    //         setUsers(data);
-    //     } catch (error) {
-    //         console.error('Error fetching users:', error);
-    //     }
-    // };
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await customAxios.get<TopResponse>('/v1/scores/top');
+                const responseAverage = await customAxios.get<AverageResponse>('/v1/scores/average');
 
-    // useEffect(() => {
-    //     fetchUsers();
-    // }, []);
+                if (response.data.success) {
+                    setDataTop(response.data.data);
+                }
+                if (responseAverage.data.success) {
+                    setDataAverage(responseAverage.data.data);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
 
-    // // Parse user list
-    // const userList = userListSchema.parse(users);
+        fetchData();
+    }, []);
 
     return (
         <Layout>
             {/* ===== Top Heading ===== */}
             <Header sticky>
                 {/* <Search /> */}
-                <div className="ml-auto flex items-center space-x-4"></div>
+                <div className="w-full flex justify-center items-center space-x-4">
+                    <h2 className="text-2xl font-bold tracking-tight font-rubik">Reports</h2>
+                </div>
             </Header>
             {/* ===== Main ===== */}
             <Main>
-                <div className="mb-2 flex items-center justify-between space-y-2 flex-wrap">
-                    <div>
-                        <h2 className="text-2xl font-bold tracking-tight font-rubik">Report</h2>
-                        <p className="text-muted-foreground">Report</p>
-                    </div>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mt-4">
+                    <Card className="bg-sidebar">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Math</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{dataAverage?.math}</div>
+                            <p className="text-xs text-muted-foreground">Average math score</p>
+                        </CardContent>
+                    </Card>
+                    <Card className="bg-sidebar">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Literature</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{dataAverage?.literature}</div>
+                            <p className="text-xs text-muted-foreground">Average literature score</p>
+                        </CardContent>
+                    </Card>
+                    <Card className="bg-sidebar">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">English</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{dataAverage?.english}</div>
+                            <p className="text-xs text-muted-foreground">Average english score</p>
+                        </CardContent>
+                    </Card>
+                    <Card className="bg-sidebar">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Civic Education</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{dataAverage?.civic_education}</div>
+                            <p className="text-xs text-muted-foreground">Average civic education score</p>
+                        </CardContent>
+                    </Card>
                 </div>
-
-                <Tabs orientation="vertical" defaultValue="overview" className="space-y-4">
-                    {/* <div className='w-full overflow-x-auto pb-2'>
-            <TabsList>
-              <TabsTrigger value='overview'>Overview</TabsTrigger>
-              <TabsTrigger value='analytics' disabled>
-                Analytics
-              </TabsTrigger>
-              <TabsTrigger value='reports' disabled>
-                Reports
-              </TabsTrigger>
-              <TabsTrigger value='notifications' disabled>
-                Notifications
-              </TabsTrigger>
-            </TabsList>
-          </div> */}
-                    <TabsContent value="overview" className="space-y-4">
-                        <div className="w-full">
-                            <Card className="w-full">
-                                <CardHeader>
-                                    <CardTitle>Overview</CardTitle>
-                                </CardHeader>
-                                <CardContent className="pl-2">
-                                    <Overview />
-                                </CardContent>
-                            </Card>
-                        </div>
-                    </TabsContent>
-                </Tabs>
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-7 mt-4">
+                    <Card className="col-span-1 lg:col-span-4 bg-sidebar">
+                        <CardHeader>
+                            <CardTitle>Student Score Distribution</CardTitle>
+                            <div className="flex justify-end items-center">
+                                <Select value={currentSubject} onValueChange={setCurrentSubject}>
+                                    <SelectTrigger className="w-28">
+                                        <SelectValue>{selectSubject.get(currentSubject)}</SelectValue>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="math">Math</SelectItem>
+                                        <SelectItem value="literature">Literature</SelectItem>
+                                        <SelectItem value="english">English</SelectItem>
+                                        <SelectItem value="physics">Physics</SelectItem>
+                                        <SelectItem value="chemistry">Chemistry</SelectItem>
+                                        <SelectItem value="biology">Biology</SelectItem>
+                                        <SelectItem value="history">History</SelectItem>
+                                        <SelectItem value="geography">Geography</SelectItem>
+                                        <SelectItem value="civic_education">Civic Education</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <Statistics data={dataChart} />
+                        </CardContent>
+                    </Card>
+                    <Card className="col-span-1 lg:col-span-3 bg-sidebar">
+                        <CardHeader>
+                            <CardTitle>Top 10</CardTitle>
+                            <CardDescription>
+                                Ranking the Top 10 Students in Group A (Math, Physics, Chemistry)
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-2">
+                            <TopGroupA data={dataTop} />
+                        </CardContent>
+                    </Card>
+                </div>
             </Main>
         </Layout>
     );

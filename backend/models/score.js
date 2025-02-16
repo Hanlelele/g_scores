@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const ScoreSchema = new mongoose.Schema({
-    sbd: { type: String, required: true, unique: true },
+    registration_Number: { type: String, required: true, unique: true },
     math: { type: Number },
     literature: { type: Number },
     english: { type: Number },
