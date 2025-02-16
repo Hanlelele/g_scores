@@ -13,15 +13,6 @@ export default defineConfig({
     },
     build: {
         rollupOptions: {
-            preserveEntrySignatures: 'strict',
-            external: [
-                '@babel/core',
-                'detect-node-es',
-                'dom-helpers',
-                'react-router-dom',
-                'set-cookie-parser',
-                'turbo-stream',
-            ],
             output: {
                 manualChunks(id) {
                     if (id.includes('node_modules')) {
@@ -33,27 +24,9 @@ export default defineConfig({
                             return parts[0];
                         }
 
-                        // Xử lý package từ .pnpm
+                        // Xử lý package từ .pnpm (ví dụ: @babel/core)
                         const packageName = parts[1];
-                        const chunkName = packageName.startsWith('@')
-                            ? packageName.split('/')[0] + '/' + parts[2]
-                            : packageName;
-
-                        // Kiểm tra nếu module có trong external thì không chia chunk
-                        if (
-                            [
-                                '@babel/core',
-                                'detect-node-es',
-                                'dom-helpers',
-                                'react-router-dom',
-                                'set-cookie-parser',
-                                'turbo-stream',
-                            ].includes(chunkName)
-                        ) {
-                            return null; // Tránh tạo chunk rỗng
-                        }
-
-                        return chunkName || null;
+                        return packageName.startsWith('@') ? packageName.split('/')[0] + '/' + parts[2] : packageName;
                     }
                 },
             },
