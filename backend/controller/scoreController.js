@@ -1,5 +1,5 @@
 const Score = require("../models/score");
-const catchAsync = require("../utils/CatchAsync");
+const catchAsync = require("../utils/catchAsync");
 
 const scoreController = {
   getDetailScore: catchAsync(async (req, res, next) => {
